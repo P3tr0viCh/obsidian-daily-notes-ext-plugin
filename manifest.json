@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-daily-notes-ext-plugin",
+	"name": "Ежедневная заметка ++",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Дополнительные команды для ежедневных заметок",
+	"author": "П3тр0виЧъ",
+	"authorUrl": "https://github.com/P3tr0viCh",
+	"isDesktopOnly": false
+}
