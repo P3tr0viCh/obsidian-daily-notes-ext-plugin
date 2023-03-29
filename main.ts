@@ -1,8 +1,6 @@
 import { Plugin, Notice, Editor, MarkdownView } from 'obsidian';
 import { getDailyNote, getAllDailyNotes, getDailyNoteSettings } from 'obsidian-daily-notes-interface';
 
-import { EOL } from 'os';
-
 import moment, { Moment } from 'moment';
 
 import * as S from 'strings';
@@ -24,15 +22,12 @@ export default class DailyNotesExtPlugin extends Plugin {
 					return date;
 				} else {
 					new Notice('invalid date');
+					return null;
 				}
-			} else {
-				new Notice(S.ERROR_NO_OPEN_DAILY_NOTE);
 			}
-		} else {
-			new Notice(S.ERROR_NO_OPEN_NOTE);
 		}
 
-		return null;
+		return moment();
 	}
 
 	async openDailyNote(date: Moment, newLeaf: boolean): Promise<boolean> {
@@ -51,12 +46,14 @@ export default class DailyNotesExtPlugin extends Plugin {
 
 	async onload() {
 		const ribbonIconEl = this.addRibbonIcon('calendar-clock', S.BUTTON_PREV_YEAR_NOTE, async (evt: MouseEvent) => {
-			const date = moment();
+			const date = this.getDailyNoteDate();
 
-			date.subtract(1, 'years');
+			if (date) {
+				date.subtract(1, 'years');
 
-			if (!await this.openDailyNote(date, true)) {
-				new Notice(S.ERROR_PREV_YEAR_NOTE_NOT_EXISTS);
+				if (!await this.openDailyNote(date, true)) {
+					new Notice(S.ERROR_PREV_YEAR_NOTE_NOT_EXISTS);
+				}
 			}
 		});
 
