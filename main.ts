@@ -49,7 +49,13 @@ export default class DailyNotesExtPlugin extends Plugin {
 			const date = this.getDailyNoteDate();
 
 			if (date) {
-				date.subtract(1, 'years');
+				if (date.isLeapYear() && date.month() == 1 && date.date() == 29) {
+					date.subtract(4, 'years');
+				} else {
+					date.subtract(1, 'years');
+				}
+
+				//new Notice(date.toString());
 
 				if (!await this.openDailyNote(date, true)) {
 					new Notice(S.ERROR_PREV_YEAR_NOTE_NOT_EXISTS);
