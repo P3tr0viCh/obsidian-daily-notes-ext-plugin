@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-prev-year-note-plugin",
+	"name": "obsidian-daily-notes-ext-plugin",
 	"version": "1.0.0",
 	"description": "This is a plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
