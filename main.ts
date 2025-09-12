@@ -1,11 +1,14 @@
-import { Plugin, Notice, Editor, MarkdownView } from 'obsidian';
+import { Plugin, Notice, MarkdownView } from 'obsidian';
 import { getDailyNote, getAllDailyNotes, getDailyNoteSettings } from 'obsidian-daily-notes-interface';
 
 import moment, { Moment } from 'moment';
+import 'moment/locale/ru';
 
 import * as S from 'strings';
 
 export default class DailyNotesExtPlugin extends Plugin {
+	statusBarItem: HTMLElement;
+
 	getDailyNoteDate(): Moment | null {
 		const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
@@ -27,7 +30,7 @@ export default class DailyNotesExtPlugin extends Plugin {
 			}
 		}
 
-		return moment();
+		return null;
 	}
 
 	async openDailyNote(date: Moment, newLeaf: boolean): Promise<boolean> {
@@ -45,6 +48,10 @@ export default class DailyNotesExtPlugin extends Plugin {
 	}
 
 	async onload() {
+		this.statusBarItem = this.addStatusBarItem();
+
+		moment.locale('ru');
+
 		const ribbonIconEl = this.addRibbonIcon('calendar-clock', S.BUTTON_PREV_YEAR_NOTE, async (evt: MouseEvent) => {
 			const date = this.getDailyNoteDate();
 
@@ -94,6 +101,16 @@ export default class DailyNotesExtPlugin extends Plugin {
 				}
 			}
 		});
+
+		this.registerEvent(this.app.workspace.on('file-open', () => {
+			const date = this.getDailyNoteDate();
+
+			if (date) {
+				this.statusBarItem.setText(date.format('dddd'));
+			} else {
+				this.statusBarItem.setText('');
+			}
+		}));
 	}
 
 	onunload() {

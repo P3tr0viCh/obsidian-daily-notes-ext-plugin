@@ -1,4 +1,4 @@
-Set-Variable obsidianPluginsPath -Option Constant -Value "C:\Docs\ObsidianDB\.obsidian\plugins\"
+Set-Variable obsidianPluginsPath -Option Constant -Value "D:\Docs\YandexDisk\ObsidianDB\.obsidian\plugins\"
 
 Set-Variable pluginName -Option Constant -Value "daily-notes-ext"
 
