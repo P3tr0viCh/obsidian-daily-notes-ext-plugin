@@ -6,3 +6,6 @@ export const ERROR_PREV_NOTE_NOT_EXISTS = "Предыдущая заметка �
 
 export const COMMAND_PREV_NOTE = "Предыдущая заметка";
 export const COMMAND_NEXT_NOTE = "Следующая заметка";
+
+export const ERROR_FILENAME_FORMAT = "Неверный формат имени заметки";
+export const ERROR_NOT_DAILY = "Используется для Ежедневных заметок";

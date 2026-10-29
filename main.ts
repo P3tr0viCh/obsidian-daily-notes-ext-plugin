@@ -7,28 +7,33 @@ import 'moment/locale/ru';
 import * as S from 'strings';
 
 export default class DailyNotesExtPlugin extends Plugin {
-	statusBarItem: HTMLElement;
+	statusBarItem!: HTMLElement;
 
 	getDailyNoteDate(): Moment | null {
 		const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
-		if (markdownView) {
-			const dailyNoteSettings = getDailyNoteSettings();
+		if (!markdownView) return null;
 
-			const dailyNotePath = markdownView.file.parent.path;
-			const dailyNoteName = markdownView.file.basename;
+		const file = markdownView.file;
 
-			if (dailyNotePath == dailyNoteSettings.folder) {
-				const date = moment(dailyNoteName, dailyNoteSettings.format);
+		const dailyNoteSettings = getDailyNoteSettings();
 
-				if (date.isValid()) {
-					return date;
-				} else {
-					new Notice('invalid date');
-					return null;
-				}
-			}
-		}
+		const dailyNoteFolder = dailyNoteSettings.folder ?? "";
+		const dailyNoteFormat = dailyNoteSettings.format ?? "YYYY-MM-DD";
+
+		if (!file.path.startsWith(dailyNoteFolder + '/') || !file.path.endsWith('.md')) return null;
+
+		const fullPath = file.path;
+
+		const relativePath = fullPath.substring(dailyNoteFolder.length + 1);
+
+		const nameWithoutExt = relativePath.slice(0, -3);
+
+		const date = moment(nameWithoutExt, dailyNoteFormat, true);
+
+		if (date.isValid()) return date;
+
+		new Notice(S.ERROR_FILENAME_FORMAT);
 
 		return null;
 	}
@@ -52,7 +57,7 @@ export default class DailyNotesExtPlugin extends Plugin {
 
 		moment.locale('ru');
 
-		const ribbonIconEl = this.addRibbonIcon('calendar-clock', S.BUTTON_PREV_YEAR_NOTE, async (evt: MouseEvent) => {
+		this.addRibbonIcon('calendar-clock', S.BUTTON_PREV_YEAR_NOTE, async () => {
 			const date = this.getDailyNoteDate();
 
 			if (date) {
@@ -62,11 +67,11 @@ export default class DailyNotesExtPlugin extends Plugin {
 					date.subtract(1, 'years');
 				}
 
-				//new Notice(date.toString());
-
 				if (!await this.openDailyNote(date, true)) {
 					new Notice(S.ERROR_PREV_YEAR_NOTE_NOT_EXISTS);
 				}
+			} else {
+				new Notice(S.ERROR_NOT_DAILY);
 			}
 		});
 
@@ -82,6 +87,8 @@ export default class DailyNotesExtPlugin extends Plugin {
 					if (!await this.openDailyNote(date, false)) {
 						new Notice(S.ERROR_PREV_NOTE_NOT_EXISTS);
 					}
+				} else {
+					new Notice(S.ERROR_NOT_DAILY);
 				}
 			}
 		});
@@ -98,6 +105,8 @@ export default class DailyNotesExtPlugin extends Plugin {
 					if (!await this.openDailyNote(date, false)) {
 						new Notice(S.ERROR_NEXT_NOTE_NOT_EXISTS);
 					}
+				} else {
+					new Notice(S.ERROR_NOT_DAILY);
 				}
 			}
 		});
